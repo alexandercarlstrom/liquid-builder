@@ -1,0 +1,56 @@
+{
+  "name": "liquid-builder",
+  "version": "0.1.0",
+  "description": "A Vue 3 component library for building LiquidJS templates visually",
+  "type": "module",
+  "main": "./dist/liquid-builder.umd.cjs",
+  "module": "./dist/liquid-builder.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/liquid-builder.js",
+      "require": "./dist/liquid-builder.umd.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "dependencies": {
+    "liquidjs": "^10.16.7",
+    "@vueuse/core": "^11.0.3",
+    "@vueuse/integrations": "^11.0.3",
+    "sortablejs": "^1.15.3"
+  },
+  "devDependencies": {
+    "@types/sortablejs": "^1.15.8",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.1",
+    "vue": "^3.4.29",
+    "vue-tsc": "^2.0.21"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "liquidjs",
+    "template",
+    "builder",
+    "editor",
+    "liquid"
+  ],
+  "author": "",
+  "license": "MIT"
+}

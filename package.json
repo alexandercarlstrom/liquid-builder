@@ -1,0 +1,19 @@
+{
+  "name": "liquid-builder-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LiquidJS template builder with Vue 3",
+  "scripts": {
+    "dev": "pnpm --filter playground dev",
+    "build": "pnpm --filter liquid-builder build",
+    "build:all": "pnpm -r build",
+    "playground": "pnpm --filter playground dev",
+    "lib": "pnpm --filter liquid-builder dev"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
