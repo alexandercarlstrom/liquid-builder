@@ -68,7 +68,8 @@ app.mount('#app')
 
 - Live template editing
 - Real-time preview with error handling
-- Variable insertion from provided data
+- Drag & drop support for variables, filters, and tags
+- Click to insert at cursor position
 - 50+ built-in Liquid filters
 - Comprehensive tag support (control flow, iteration, etc.)
 - Search and filter capabilities

@@ -21,9 +21,15 @@
           <textarea
             ref="editorRef"
             v-model="localTemplate"
-            class="liquid-editor w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
-            placeholder="Start typing your Liquid template here..."
+            :class="[
+              'liquid-editor w-full h-64 p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y transition-colors',
+              isDropZoneActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+            ]"
+            placeholder="Start typing your Liquid template here, or drag and drop from the sidebar..."
             @input="handleTemplateChange"
+            @dragover="handleDragOver"
+            @dragleave="handleDragLeave"
+            @drop="handleDrop"
           />
         </div>
       </div>
@@ -79,6 +85,7 @@ const editorRef = ref<HTMLTextAreaElement>()
 const renderedOutput = ref('')
 const renderError = ref('')
 const liquidEngine = new Liquid()
+const isDropZoneActive = ref(false)
 
 // Parse variables into a structured format
 const parsedVariables = computed<LiquidVariable[]>(() => {
@@ -153,6 +160,70 @@ const handleInsert = (value: string) => {
 }
 
 const refreshPreview = () => {
+  renderTemplate()
+}
+
+// Drag and drop handlers
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'copy'
+  }
+  isDropZoneActive.value = true
+}
+
+const handleDragLeave = (event: DragEvent) => {
+  // Only deactivate if we're leaving the textarea itself, not child elements
+  const target = event.target as HTMLElement
+  if (target === editorRef.value) {
+    isDropZoneActive.value = false
+  }
+}
+
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isDropZoneActive.value = false
+
+  const textarea = editorRef.value
+  if (!textarea) return
+
+  // Get the dropped data
+  const jsonData = event.dataTransfer?.getData('application/json')
+  const textData = event.dataTransfer?.getData('text/plain')
+
+  let valueToInsert = ''
+
+  if (jsonData) {
+    try {
+      const item = JSON.parse(jsonData)
+      valueToInsert = item.value
+    } catch (error) {
+      valueToInsert = textData || ''
+    }
+  } else {
+    valueToInsert = textData || ''
+  }
+
+  if (!valueToInsert) return
+
+  // Calculate the position to insert at based on mouse position
+  // For textareas, we'll use the current cursor position
+  const start = textarea.selectionStart
+  const end = textarea.selectionEnd
+  const text = localTemplate.value
+
+  // Insert at cursor position
+  localTemplate.value = text.substring(0, start) + valueToInsert + text.substring(end)
+
+  emit('update:template', localTemplate.value)
+
+  // Set cursor position after inserted text
+  setTimeout(() => {
+    textarea.focus()
+    const newPosition = start + valueToInsert.length
+    textarea.setSelectionRange(newPosition, newPosition)
+  }, 0)
+
   renderTemplate()
 }
 

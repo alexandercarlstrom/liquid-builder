@@ -1,5 +1,12 @@
 <template>
   <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+    <!-- Header -->
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+      <p class="text-xs text-gray-600">
+        <span class="font-medium">Tip:</span> Click to insert or drag & drop into the editor
+      </p>
+    </div>
+
     <!-- Tabs -->
     <div class="border-b border-gray-200">
       <nav class="flex -mb-px">
@@ -30,8 +37,14 @@
           <div
             v-for="variable in variables"
             :key="variable.path"
+            draggable="true"
             @click="insertVariable(variable)"
-            class="p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors"
+            @dragstart="handleDragStart($event, 'variable', `{{ ${variable.path} }}`, variable.path)"
+            @dragend="handleDragEnd"
+            :class="[
+              'p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-move transition-colors',
+              isDragging && draggedValue === `{{ ${variable.path} }}` ? 'opacity-50' : ''
+            ]"
           >
             <div class="flex items-center justify-between">
               <code class="text-sm font-mono text-blue-600">{{ variable.path }}</code>
@@ -55,8 +68,14 @@
           <div
             v-for="filter in filteredFilters"
             :key="filter.name"
+            draggable="true"
             @click="insertFilter(filter)"
-            class="p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors"
+            @dragstart="handleDragStart($event, 'filter', getFilterValue(filter), filter.name)"
+            @dragend="handleDragEnd"
+            :class="[
+              'p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-move transition-colors',
+              isDragging && draggedValue === getFilterValue(filter) ? 'opacity-50' : ''
+            ]"
           >
             <div class="font-medium text-sm text-gray-900">{{ filter.name }}</div>
             <div class="text-xs text-gray-600 mt-1">{{ filter.description }}</div>
@@ -108,8 +127,14 @@
           <div
             v-for="tag in filteredTags"
             :key="tag.name"
+            draggable="true"
             @click="insertTag(tag)"
-            class="p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors"
+            @dragstart="handleDragStart($event, 'tag', getTagValue(tag), tag.name)"
+            @dragend="handleDragEnd"
+            :class="[
+              'p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-move transition-colors',
+              isDragging && draggedValue === getTagValue(tag) ? 'opacity-50' : ''
+            ]"
           >
             <div class="flex items-center justify-between">
               <div class="font-medium text-sm text-gray-900">{{ tag.name }}</div>
@@ -127,6 +152,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { LiquidVariable, LiquidFilter, LiquidTag } from '../types'
+import type { DragItem } from '../composables/useDragAndDrop'
 
 interface Props {
   variables: LiquidVariable[]
@@ -144,6 +170,8 @@ const activeTab = ref<'variables' | 'filters' | 'tags'>('variables')
 const filterSearch = ref('')
 const tagSearch = ref('')
 const tagTypeFilter = ref<string | null>(null)
+const isDragging = ref(false)
+const draggedValue = ref<string | null>(null)
 
 const tabs = [
   { id: 'variables' as const, label: 'Variables' },
@@ -199,17 +227,53 @@ const insertFilter = (filter: LiquidFilter) => {
 }
 
 const insertTag = (tag: LiquidTag) => {
+  const value = getTagValue(tag)
+  emit('insert', value)
+}
+
+// Helper functions for drag and drop
+const getFilterValue = (filter: LiquidFilter): string => {
+  if (filter.parameters && filter.parameters.length > 0) {
+    const params = filter.parameters.map(p => `"${p}"`).join(', ')
+    return `{{ variable | ${filter.name}: ${params} }}`
+  } else {
+    return `{{ variable | ${filter.name} }}`
+  }
+}
+
+const getTagValue = (tag: LiquidTag): string => {
   if (tag.hasEndTag) {
-    // For tags with end tags, insert both opening and closing
     const lines = tag.syntax.split('\n')
     if (lines.length > 1) {
-      emit('insert', tag.syntax)
+      return tag.syntax
     } else {
-      emit('insert', `{% ${tag.name} %}\n  \n{% end${tag.name} %}`)
+      return `{% ${tag.name} %}\n  \n{% end${tag.name} %}`
     }
   } else {
-    // For standalone tags
-    emit('insert', `{% ${tag.name} %}`)
+    return `{% ${tag.name} %}`
   }
+}
+
+// Drag and drop handlers
+const handleDragStart = (event: DragEvent, type: DragItem['type'], value: string, label: string) => {
+  isDragging.value = true
+  draggedValue.value = value
+
+  const dragItem: DragItem = {
+    type,
+    value,
+    label
+  }
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'copy'
+    event.dataTransfer.setData('text/plain', value)
+    event.dataTransfer.setData('application/json', JSON.stringify(dragItem))
+  }
+}
+
+const handleDragEnd = () => {
+  isDragging.value = false
+  draggedValue.value = null
 }
 </script>

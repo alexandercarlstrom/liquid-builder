@@ -6,7 +6,8 @@ A Vue 3 component library for building LiquidJS templates visually. This tool en
 
 - **Visual Template Editor**: Edit Liquid templates in a text editor with live syntax highlighting
 - **Live Preview**: See your template rendered in real-time as you type
-- **Variable Insertion**: Click to insert available variables from your data
+- **Drag & Drop**: Drag variables, filters, and tags directly into the editor
+- **Click to Insert**: Alternatively, click any item to insert it at the cursor position
 - **Comprehensive Filter Library**: Browse and insert 50+ built-in Liquid filters
 - **Tag Support**: Access all Liquid tags including control flow, iteration, and variable tags
 - **Search & Filter**: Quickly find the filters and tags you need
@@ -130,7 +131,7 @@ liquid-builder/
 - [x] Variable insertion
 - [x] Filter support
 - [x] Tag support
-- [ ] Drag and drop operations
+- [x] Drag and drop operations
 - [ ] Template snippets
 - [ ] Custom filters/tags registration
 - [ ] Syntax highlighting
