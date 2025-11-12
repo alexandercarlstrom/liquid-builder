@@ -4,11 +4,11 @@
   "private": true,
   "description": "LiquidJS template builder with Vue 3",
   "scripts": {
-    "dev": "pnpm --filter playground dev",
-    "build": "pnpm --filter liquid-builder build",
-    "build:all": "pnpm -r build",
-    "playground": "pnpm --filter playground dev",
-    "lib": "pnpm --filter liquid-builder dev"
+    "dev": "npm run dev --workspace=playground",
+    "build": "npm run build --workspace=liquid-builder",
+    "build:all": "npm run build --workspaces --if-present",
+    "playground": "npm run dev --workspace=playground",
+    "lib": "npm run dev --workspace=liquid-builder"
   },
   "workspaces": [
     "packages/*"

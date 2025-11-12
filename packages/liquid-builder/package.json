@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
     "preview": "vite preview"
   },
   "peerDependencies": {

@@ -8,8 +8,6 @@ A Vue 3 component library for building LiquidJS templates visually.
 npm install liquid-builder
 # or
 yarn add liquid-builder
-# or
-pnpm add liquid-builder
 ```
 
 ## Usage

@@ -28,8 +28,6 @@ This monorepo contains:
 npm install liquid-builder
 # or
 yarn add liquid-builder
-# or
-pnpm add liquid-builder
 ```
 
 ### Basic Usage
@@ -74,22 +72,22 @@ app.use(LiquidBuilderPlugin)
 ### Prerequisites
 
 - Node.js >= 16
-- pnpm (recommended) or npm
+- npm
 
 ### Setup
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Run the playground in development mode
-pnpm dev
+npm run dev
 
 # Build the library
-pnpm build
+npm run build
 
 # Build all packages
-pnpm build:all
+npm run build:all
 ```
 
 ### Project Structure
@@ -108,8 +106,7 @@ liquid-builder/
 │   └── playground/         # Demo application
 │       ├── src/
 │       └── package.json
-├── package.json
-└── pnpm-workspace.yaml
+└── package.json
 ```
 
 ## Component API
